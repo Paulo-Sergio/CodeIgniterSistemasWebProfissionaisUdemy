@@ -4,7 +4,7 @@ $(function () {
 
     $.ajax({
       type: "post",
-      url: BASE_URL + "auth/ajaxLogin",
+      url: BASE_URL + "restrict/ajaxLogin",
       dataType: "json",
       data: $(this).serialize(),
       beforeSend: function() {
@@ -15,7 +15,7 @@ $(function () {
         if (json['status'] == 1) {
           clearErrors();
           $("#btn_login").parent().siblings(".help-block").html(loadingImg("Logando..."));
-          window.location = BASE_URL + "auth";
+          window.location = BASE_URL + "restrict";
         } else {
           showErrors(json['error_list']);
         }
