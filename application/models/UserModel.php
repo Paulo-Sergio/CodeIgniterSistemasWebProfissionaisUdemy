@@ -24,4 +24,43 @@ class UserModel extends CI_Model
       return null;
     }
   }
+
+  public function getData($id, $select = null)
+  {
+    if (!empty($select)) {
+      $this->db->select($select);
+    }
+    $this->db->from("users");
+    $this->db->where("user_id", $id);
+    return $this->db->get();
+  }
+
+  public function insert($data)
+  {
+    $this->db->insert("users", $data);
+  }
+
+  public function update($id, $data)
+  {
+    $this->db->where("user_id", $id);
+    $this->db->update("users", $data);
+  }
+
+  public function delete($id)
+  {
+    $this->db->where("user_id", $id);
+    $this->db->delete("users");
+  }
+
+  public function isDuplicate($field, $value, $id = null)
+  {
+    if (!empty($id)) {
+      $this->db->where("user_id <>", $id);
+    }
+    $this->db->from("users");
+    $this->db->where($field, $value);
+
+    $result = $this->db->get();
+    return ($result->num_rows() > 0);
+  }
 }
