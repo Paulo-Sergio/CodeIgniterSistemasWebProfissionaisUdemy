@@ -5,6 +5,7 @@ function clearErrors() {
   $(".help-block").html("");
 }
 
+/* Exibir os errors recorrente da tela de login */
 function showErrors(error_list) {
   clearErrors();
 
@@ -14,10 +15,21 @@ function showErrors(error_list) {
   });
 }
 
+/* Exibir os errors recorrente dos modals */
+function showErrorsModal(error_list) {
+  clearErrors();
+
+  $.each(error_list, function (id, message) {
+    $(id).parent().parent().addClass("has-error");
+    $(id).siblings(".help-block").html(message);
+  });
+}
+
 function loadingImg(message = "") {
   return "<i class='fa fa-circle-o-notch fa-spin'></i>&nbsp; " + message;
 }
 
+/* utilitario para upload da imagem */
 function uploadImg(input_file, img, input_path) {
   src_before = img.attr("src")
   img_file = input_file[0].files[0];

@@ -13,7 +13,7 @@
       <div class="col-lg-offset-5 col-lg-2 text-center">
         <div class="form-group">
           <a id="btn_your_user" class="btn btn-link"><i class="fa fa-user"></i></a>
-          <a class="btn btn-link" href="auth/logoff"><i class="fa fa-sign-out"></i></a>
+          <a class="btn btn-link" href="restrict/logoff"><i class="fa fa-sign-out"></i></a>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@
                 <i class="fa fa-upload"></i>&nbsp;&nbsp;Importar imagem
                 <input type="file" id="btn_upload_course_img" accept="image/*" style="display: none;">
               </label>
-              <input id="course_img_path" name="course_img" hidden>
+              <input id="course_img_path" name="course_img_path" hidden>
               <span class="help-block"></span>
             </div>
           </div>
