@@ -164,11 +164,129 @@ class Restrict extends CI_Controller
       }
 
       if (empty($data["course_id"])) {
-        $this->coursesModel->insert($data);
+        $this->CoursesModel->insert($data);
       } else {
         $course_id = $data["course_id"];
         unset($data["course_id"]);
-        $this->coursesModel->update($course_id, $data);
+        $this->CoursesModel->update($course_id, $data);
+      }
+    }
+
+    echo json_encode($json);
+  }
+
+  public function ajaxSaveMember()
+  {
+
+    if (!$this->input->is_ajax_request()) {
+      exit("Nenhum acesso de script direto permitido!");
+    }
+
+    $json = array();
+    $json["status"] = 1;
+    $json["error_list"] = array();
+
+    $this->load->model("TeamModel");
+
+    $data = $this->input->post();
+
+    if (empty($data["member_name"])) {
+      $json["error_list"]["#member_name"] = "Nome do membro é obrigatório!";
+    }
+
+    if (!empty($json["error_list"])) {
+      $json["status"] = 0;
+    } else {
+
+      if (!empty($data["member_photo_path"])) {
+
+        $file_name = basename($data["member_photo_path"]);
+        $old_path = getcwd() . "/tmp/" . $file_name;
+        $new_path = getcwd() . "/public/images/team/" . $file_name;
+        rename($old_path, $new_path);
+
+        $data["member_photo_path"] = "/public/images/team/" . $file_name;
+      } else {
+        unset($data["member_photo_path"]);
+      }
+
+      if (empty($data["member_id"])) {
+        $this->TeamModel->insert($data);
+      } else {
+        $member_id = $data["member_id"];
+        unset($data["member_id"]);
+        $this->TeamModel->update($member_id, $data);
+      }
+    }
+
+    echo json_encode($json);
+  }
+
+  public function ajaxSaveUser()
+  {
+
+    if (!$this->input->is_ajax_request()) {
+      exit("Nenhum acesso de script direto permitido!");
+    }
+
+    $json = array();
+    $json["status"] = 1;
+    $json["error_list"] = array();
+
+    $this->load->model("UserModel");
+
+    $data = $this->input->post();
+
+    if (empty($data["user_login"])) {
+      $json["error_list"]["#user_login"] = "Login é obrigatório!";
+    } else {
+      if ($this->UserModel->isDuplicate("user_login", $data["user_login"], $data["user_id"])) {
+        $json["error_list"]["#user_login"] = "Login já existente!";
+      }
+    }
+
+    if (empty($data["user_full_name"])) {
+      $json["error_list"]["#user_full_name"] = "Nome Completo é obrigatório!";
+    }
+
+    if (empty($data["user_email"])) {
+      $json["error_list"]["#user_email"] = "E-mail é obrigatório!";
+    } else {
+      if ($this->UserModel->isDuplicate("user_email", $data["user_email"], $data["user_id"])) {
+        $json["error_list"]["#user_email"] = "E-mail já existente!";
+      } else {
+        if ($data["user_email"] != $data["user_email_confirm"]) {
+          $json["error_list"]["#user_email"] = "";
+          $json["error_list"]["#user_email_confirm"] = "E-mails não conferem!";
+        }
+      }
+    }
+
+    if (empty($data["user_password"])) {
+      $json["error_list"]["#user_password"] = "Senha é obrigatório!";
+    } else {
+      if ($data["user_password"] != $data["user_password_confirm"]) {
+        $json["error_list"]["#user_password"] = "";
+        $json["error_list"]["#user_password_confirm"] = "Senha não conferem!";
+      }
+    }
+
+    if (!empty($json["error_list"])) {
+      $json["status"] = 0;
+    } else {
+
+      $data["password_hash"] = password_hash($data["user_password"], PASSWORD_DEFAULT);
+
+      unset($data["user_password"]);
+      unset($data["user_password_confirm"]);
+      unset($data["user_email_confirm"]);
+
+      if (empty($data["user_id"])) {
+        $this->UserModel->insert($data);
+      } else {
+        $user_id = $data["user_id"];
+        unset($data["user_id"]);
+        $this->UserModel->update($user_id, $data);
       }
     }
 
