@@ -109,5 +109,25 @@ $(function () {
     return false;
   });
 
+  /* clicar no btn para obter informações do usuário logado */
+  $("#btn_your_user").click(function () {
+
+    $.ajax({
+      type: "POST",
+      url: BASE_URL + "restrict/ajaxGetUserData",
+      dataType: "json",
+      data: { "user_id": $(this).attr("user_id") },
+      success: function (response) {
+        clearErrors();
+        $("#form_user")[0].reset();
+        $.each(response["input"], function (id, value) {
+          $("#" + id).val(value);
+        });
+        $("#modal_user").modal();
+      }
+    })
+
+    return false;
+  });
 
 })

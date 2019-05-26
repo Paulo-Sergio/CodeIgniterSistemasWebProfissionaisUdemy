@@ -17,10 +17,18 @@ class Restrict extends CI_Controller
   {
     if ($this->session->userdata("user_id")) {
       $data = array(
-        "scripts" => array(
-          "util.js",
-          "restrict.js"
-        )
+        "styles" => array(
+					"dataTables.bootstrap.min.css",
+					"datatables.min.css"
+				),
+				"scripts" => array(
+					"sweetalert2.all.min.js",
+					"dataTables.bootstrap.min.js",
+					"datatables.min.js",
+					"util.js",
+					"restrict.js" 
+				),
+        "user_id" => $this->session->userdata("user_id")
       );
       $this->template->show("restrict", $data);
     } else {
@@ -289,6 +297,81 @@ class Restrict extends CI_Controller
         $this->UserModel->update($user_id, $data);
       }
     }
+
+    echo json_encode($json);
+  }
+
+  public function ajax_get_course_data()
+  {
+
+    if (!$this->input->is_ajax_request()) {
+      exit("Nenhum acesso de script direto permitido!");
+    }
+
+    $json = array();
+    $json["status"] = 1;
+    $json["input"] = array();
+
+    $this->load->model("CoursesModel");
+
+    $course_id = $this->input->post("course_id");
+    $data = $this->CoursesModel->getData($course_id)->result_array()[0];
+    $json["input"]["course_id"] = $data["course_id"];
+    $json["input"]["course_name"] = $data["course_name"];
+    $json["input"]["course_duration"] = $data["course_duration"];
+    $json["input"]["course_description"] = $data["course_description"];
+
+    $json["img"]["course_img_path"] = base_url() . $data["course_img"];
+
+    echo json_encode($json);
+  }
+
+  public function ajax_get_member_data()
+  {
+
+    if (!$this->input->is_ajax_request()) {
+      exit("Nenhum acesso de script direto permitido!");
+    }
+
+    $json = array();
+    $json["status"] = 1;
+    $json["input"] = array();
+
+    $this->load->model("TeamModel");
+
+    $member_id = $this->input->post("member_id");
+    $data = $this->TeamModel->getData($member_id)->result_array()[0];
+    $json["input"]["member_id"] = $data["member_id"];
+    $json["input"]["member_name"] = $data["member_name"];
+    $json["input"]["member_description"] = $data["member_description"];
+
+    $json["img"]["member_photo_path"] = base_url() . $data["member_photo"];
+
+    echo json_encode($json);
+  }
+
+  public function ajaxGetUserData()
+  {
+
+    if (!$this->input->is_ajax_request()) {
+      exit("Nenhum acesso de script direto permitido!");
+    }
+
+    $json = array();
+    $json["status"] = 1;
+    $json["input"] = array();
+
+    $this->load->model("UserModel");
+
+    $user_id = $this->input->post("user_id");
+    $data = $this->UserModel->getData($user_id)->result_array()[0];
+    $json["input"]["user_id"] = $data["user_id"];
+    $json["input"]["user_login"] = $data["user_login"];
+    $json["input"]["user_full_name"] = $data["user_full_name"];
+    $json["input"]["user_email"] = $data["user_email"];
+    $json["input"]["user_email_confirm"] = $data["user_email"];
+    $json["input"]["user_password"] = $data["password_hash"];
+    $json["input"]["user_password_confirm"] = $data["password_hash"];
 
     echo json_encode($json);
   }
